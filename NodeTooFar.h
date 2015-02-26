@@ -11,7 +11,7 @@ using namespace std;
 /**
  * Read in a single test case.
  */
-string read_case(istream& r);
+string read_case(istream& r, int num_connections);
 
 /**
  * Solve one test case.
@@ -27,5 +27,10 @@ void print_results(int case_num, ostream &w);
  * The "main" function of the program.
  */
 void node_too_far_solve(istream& r, ostream& w);
+
+/**
+ * Gets the next integer from the input stream.
+ */
+int next_int(istream& r);
 
 #endif

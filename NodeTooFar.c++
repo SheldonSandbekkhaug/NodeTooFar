@@ -8,28 +8,15 @@
 
 using namespace std;
 
-string read_case(istream& r)
+string read_case(istream& r, int num_connections)
 {
-  string out = "";
-  string s;
-  while(getline(r, s))
-  {
-    if(s == "")
-      break;
-    out += s + "\n";
-  }
-
-  // Removes trailing newline
-  out = out.substr(0, out.length() - 1);
-
-  assert("" != out);
-
-  return out;
+  return "TODO"; // TODO: implement this
 }
+
 
 void solve_case(istream& r, ostream& w)
 {
-
+  // TODO: implement
 }
 
 
@@ -41,20 +28,37 @@ void print_results(int case_num, ostream &w)
   w << num_nodes << " nodes not reachable from node 35 with TTL = " << some_ttl << endl;
 }
 
+
 void node_too_far_solve(istream& r, ostream& w)
 {
   string s;
-  getline(r,s);
-  istringstream sin(s); // Get number of elections
-  int i;
-  sin >> i;
-  getline(r,s); // Ignores the expected blank line
-  for(;i>0;i--)
+  int num_connections = 1;
+  while(num_connections != 0)
   {
-    istringstream input(read_case(r));
+    // Ignore blank lines between cases
+    while(getline(r, s))
+    {
+      if(s != "")
+        break;
+    }
 
-    solve_case(input, w);
-    if(i>1)
-      w << "\n";
+    // Get the number of connections in the next case
+    num_connections = next_int(r);
+
+    istringstream one_case(read_case(r, num_connections));
+
+    //solve_case(one_case, w);
   }
+}
+
+
+int next_int(istream& r)
+{
+  string s;
+  getline(r,s);
+  istringstream int_in(s);
+  int i;
+  int_in >> i;
+
+  return i;
 }
