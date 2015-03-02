@@ -22,12 +22,9 @@ void parse_case(istream& r, int num_connections,
     int k;
     r >> k;
 
-//    cout << j << ", " << k << endl; // tODO remove
-
     if (i < num_connections)
     {
-      // Make pairs for connections
-
+      // Make connections
       updateNetwork(network, j);
       network[j].store(k);
 
@@ -148,17 +145,18 @@ void node_too_far_solve(istream& r, ostream& w)
   {
     while (getline(r, s)) // Ignore blank lines
     {
-      if (s != "")
+      if (!all_whitespace(s) || s != "")
         break;
     }
 
-    if (all_whitespace(s)) // Stop at EOF
-    {
-      break;
-    }
-    
-    // Get the number of connections in the next case
-    num_connections = next_int(s);
+    // Get the number of connections
+    istringstream int_in(s);
+    if (!(int_in >> num_connections))
+      return;
+
+    // Exit condition
+    if (num_connections == 0)
+      return;
 
     map<int, Node> network;
     vector<pair<int, int>> queries;
