@@ -55,8 +55,14 @@ void updateNetwork(map<int, Node>& network, int id)
 void solve_case(map<int, Node> network, vector<pair<int, int>> queries,
     ostream& w)
 {
+  bool first_query = true;
   for (unsigned int i = 0; i < queries.size(); ++i)
+  {
+    if (!first_query)
+      w << endl;
     execute_query(queries[i], network, w);
+    first_query = false;
+  }
 }
 
 void execute_query(pair<int, int> p, map<int, Node> network, ostream &w)
@@ -84,17 +90,15 @@ void execute_query(pair<int, int> p, map<int, Node> network, ostream &w)
     Node t = to_explore.front();
     to_explore.pop_front();
 
-//    cout << "Looking at " << t.id << endl; // TODO: remove
-
     // Add all of t's neighbors that haven't been visited yet
     for (unsigned int i = 0; i < t.connections.size(); ++i)
     {
-      int old_distance_left = distance_left[t.connections[i]];
+      int neighbor_id = t.connections[i];
+      int old_distance_left = distance_left[neighbor_id];
 
       // Update entry in the TTL map
-      if (old_distance_left < 0)
+      if (old_distance_left < distance_left[t.id] - 1)
       {
-        int neighbor_id = t.connections[i];
         distance_left[neighbor_id] = distance_left[t.id] - 1;
 
         if (distance_left[neighbor_id] > 0)
@@ -123,7 +127,7 @@ void print_results(int num_nodes, int start, int ttl, ostream &w)
 {
   w << "Case " << caseNum << ": ";
   w << num_nodes << " nodes not reachable from node " << start;
-  w << " with TTL = " << ttl << "." << endl;
+  w << " with TTL = " << ttl << ".";
   ++caseNum;
 }
 
@@ -157,6 +161,7 @@ void node_too_far_solve(istream& r, ostream& w)
 {
   string s;
   int num_connections = 1;
+  int iterations = 0;
   while(num_connections != 0)
   {
     while (getline(r, s)) // Ignore blank lines
@@ -167,10 +172,8 @@ void node_too_far_solve(istream& r, ostream& w)
 
     if (all_whitespace(s)) // Stop at EOF
     {
-      // cout << "s: " << s << endl;
       break;
     }
-
     
     // Get the number of connections in the next case
     num_connections = next_int(s);
@@ -180,7 +183,11 @@ void node_too_far_solve(istream& r, ostream& w)
     // Pairs of node, TTL
     vector<pair<int, int>> queries = get_queries(r);
 
+    if (iterations > 0)
+      w << endl;
+
     solve_case(network, queries, w);
+    ++iterations;
   }
 }
 
