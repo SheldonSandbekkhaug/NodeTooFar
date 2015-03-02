@@ -61,5 +61,14 @@ void node_too_far_solve(istream& r, ostream& w);
  */
 int next_int(istream& r);
 
+/**
+ * Gets the next integer from the string.
+ */
+int next_int(string s);
+
+/**
+ * True if s is all whitespace, false otherwise.
+ */
+bool all_whitespace(string s);
 
 #endif

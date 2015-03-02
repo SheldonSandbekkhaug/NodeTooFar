@@ -159,8 +159,21 @@ void node_too_far_solve(istream& r, ostream& w)
   int num_connections = 1;
   while(num_connections != 0)
   {
+    while (getline(r, s)) // Ignore blank lines
+    {
+      if (s != "")
+        break;
+    }
+
+    if (all_whitespace(s)) // Stop at EOF
+    {
+      // cout << "s: " << s << endl;
+      break;
+    }
+
+    
     // Get the number of connections in the next case
-    num_connections = next_int(r);
+    num_connections = next_int(s);
 
     map<int, Node> network = parse_case(r, num_connections);
 
@@ -168,7 +181,6 @@ void node_too_far_solve(istream& r, ostream& w)
     vector<pair<int, int>> queries = get_queries(r);
 
     solve_case(network, queries, w);
-    getline(r, s); // Ignore blank line
   }
 }
 
@@ -183,6 +195,27 @@ int next_int(istream& r)
   int_in >> i;
 
   return i;
+}
+
+
+int next_int(string s)
+{
+  istringstream int_in(s);
+  int i;
+  int_in >> i;
+
+  return i;
+}
+
+bool all_whitespace(string s)
+{
+  for (unsigned int i = 0; i < s.size(); ++i)
+  {
+    if (!isspace(s[i]))
+      return false;
+  }
+
+  return true;
 }
 
 
