@@ -84,11 +84,7 @@ void execute_query(pair<int, int> p, map<int, Node> network, ostream &w)
     Node t = to_explore.front();
     to_explore.pop_front();
 
-    // Don't examine this node if its TTL is 0
-    if (distance_left[t.id] == 0)
-    {
-      continue;
-    }
+//    cout << "Looking at " << t.id << endl; // TODO: remove
 
     // Add all of t's neighbors that haven't been visited yet
     for (unsigned int i = 0; i < t.connections.size(); ++i)
@@ -101,9 +97,12 @@ void execute_query(pair<int, int> p, map<int, Node> network, ostream &w)
         int neighbor_id = t.connections[i];
         distance_left[neighbor_id] = distance_left[t.id] - 1;
 
-        // Add this neighbor to the to-be-explored list
-        Node neighbor = network[neighbor_id];
-        to_explore.push_front(neighbor);
+        if (distance_left[neighbor_id] > 0)
+        {
+          // Add this neighbor to the to-be-explored list
+          Node neighbor = network[neighbor_id];
+          to_explore.push_front(neighbor);
+        }
       }
     }
   }
