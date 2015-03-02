@@ -9,6 +9,8 @@
 
 using namespace std;
 
+int caseNum = 1;
+
 map<int, Node> parse_case(istream& r, int num_connections)
 {
   string s;
@@ -25,20 +27,29 @@ map<int, Node> parse_case(istream& r, int num_connections)
       int k;
       line >> k;
 
-      // Try to find that specified node
-      auto n1 = network.find(j);
-      if (n1 == network.end())
-      {
-        Node newNode(j);
-        network[newNode.id] = newNode;
-      }
+      updateNetwork(network, j);
       network[j].store(k);
+
+      updateNetwork(network, k);
+      network[k].store(j);
 
       ++i;
     }
   }
 
   return network;
+}
+
+
+void updateNetwork(map<int, Node>& network, int id)
+{
+  // Try to find that specified node
+  auto n1 = network.find(id);
+  if (n1 == network.end())
+  {
+    Node newNode(id);
+    network[newNode.id] = newNode;
+  }
 }
 
 
@@ -55,6 +66,13 @@ void execute_query(pair<int, int> p, map<int, Node> network, ostream &w)
   list<Node> to_explore;
   map<int, int> distance_left; // <nodeID, TTL when reached>
 
+  // Initialize every entry in distance_left to have value -1
+  for (auto it = network.begin(); it != network.end(); ++it)
+  {
+    distance_left[it->first] = -1;
+  }
+
+  // Initialize breadth-first search
   int nodeID = p.first;
   distance_left[nodeID] = p.second;
 
@@ -66,35 +84,61 @@ void execute_query(pair<int, int> p, map<int, Node> network, ostream &w)
     // Get the next Node
     Node t = to_explore.front();
     to_explore.pop_front();
-    
+
     // Add all of t's neighbors that haven't been visited yet
     for (unsigned int i = 0; i < t.connections.size(); ++i)
     {
-      auto neighbor = distance_left.find(t.connections[i]);
+      int old_ttl = distance_left[t.connections[i]];
 
-      if (neighbor == distance_left.end())
+      // Update entry in the TTL map
+      if (old_ttl < 0)
       {
-        distance_left[t.connections[i]] = distance_left[t.id] - 1;
+        distance_left[t.connections[i]] = distance_left[t.id] - 1;       
       }
-    }
-    
+    }  
   }
-  
 
+  // Find all nodes that have TTL of less than 0
+  int unreachable = 0;
+  for (auto it = distance_left.begin(); it != distance_left.end(); ++it)
+  {
+    if (it->second < 0)
+      ++unreachable;
+  }
+
+  print_results(unreachable, p.second, w);
 }
 
 
-void print_results(int case_num, ostream &w)
+void print_results(int num_nodes, int ttl, ostream &w)
 {
-  // TODO: real behavior
-  int num_nodes = 0;
-  int some_ttl = 0;
-  w << num_nodes << " nodes not reachable from node 35 with TTL = " << some_ttl << endl;
+  w << "Case " << caseNum << ": ";
+  w << num_nodes << " nodes not reachable from node " << num_nodes;
+  w << " with TTL = " << ttl << "." << endl;
+  ++caseNum;
 }
 
 vector<pair<int, int>> get_queries(istream& r)
 {
   vector<pair<int, int>> queries;
+
+  string s;
+  getline(r, s);
+  istringstream line(s);
+
+  int startNode = 0;
+  while (line >> startNode)
+  {
+    int ttl;
+    line >> ttl;
+
+    // Break condition
+    if (startNode == 0 && ttl == 0)
+      break;
+
+    // Make a pair and add it to the vector
+    queries.push_back(make_pair(startNode, ttl));
+  }
 
   return queries;
 }
@@ -115,6 +159,7 @@ void node_too_far_solve(istream& r, ostream& w)
     vector<pair<int, int>> queries = get_queries(r);
 
     solve_case(network, queries, w);
+    getline(r, s); // Ignore blank line
   }
 }
 

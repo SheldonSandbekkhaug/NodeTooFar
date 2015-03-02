@@ -26,6 +26,12 @@ class Node
 map<int, Node> parse_case(istream& r, int num_connections);
 
 /**
+ *  Check if a node with id exists.
+ *  If not, add it to the network.
+ */
+void updateNetwork(map<int, Node>& network, int id);
+
+/**
  * Solve one test case.
  */
 void solve_case(map<int, Node>, vector<pair<int, int>> queries, ostream& w);
@@ -43,7 +49,7 @@ void execute_query(pair<int, int>, map<int, Node>, ostream &w);
 /**
  * Print the input case results.
  */
-void print_results(int case_num, ostream &w);
+void print_results(int num_nodes, int ttl, ostream &w);
 
 /**
  * The "main" function of the program.
