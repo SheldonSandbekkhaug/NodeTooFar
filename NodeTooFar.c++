@@ -84,17 +84,28 @@ void execute_query(pair<int, int> p, map<int, Node> network, ostream &w)
     Node t = to_explore.front();
     to_explore.pop_front();
 
+    // Don't examine this node if its TTL is 0
+    if (distance_left[t.id] == 0)
+    {
+      continue;
+    }
+
     // Add all of t's neighbors that haven't been visited yet
     for (unsigned int i = 0; i < t.connections.size(); ++i)
     {
-      int old_ttl = distance_left[t.connections[i]];
+      int old_distance_left = distance_left[t.connections[i]];
 
       // Update entry in the TTL map
-      if (old_ttl < 0)
+      if (old_distance_left < 0)
       {
-        distance_left[t.connections[i]] = distance_left[t.id] - 1;       
+        int neighbor_id = t.connections[i];
+        distance_left[neighbor_id] = distance_left[t.id] - 1;
+
+        // Add this neighbor to the to-be-explored list
+        Node neighbor = network[neighbor_id];
+        to_explore.push_front(neighbor);
       }
-    }  
+    }
   }
 
   // Find all nodes that have TTL of less than 0
@@ -105,14 +116,14 @@ void execute_query(pair<int, int> p, map<int, Node> network, ostream &w)
       ++unreachable;
   }
 
-  print_results(unreachable, p.second, w);
+  print_results(unreachable, p.first, p.second, w);
 }
 
 
-void print_results(int num_nodes, int ttl, ostream &w)
+void print_results(int num_nodes, int start, int ttl, ostream &w)
 {
   w << "Case " << caseNum << ": ";
-  w << num_nodes << " nodes not reachable from node " << num_nodes;
+  w << num_nodes << " nodes not reachable from node " << start;
   w << " with TTL = " << ttl << "." << endl;
   ++caseNum;
 }

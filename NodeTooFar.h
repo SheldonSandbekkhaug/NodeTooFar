@@ -49,7 +49,7 @@ void execute_query(pair<int, int>, map<int, Node>, ostream &w);
 /**
  * Print the input case results.
  */
-void print_results(int num_nodes, int ttl, ostream &w);
+void print_results(int num_nodes, int start, int ttl, ostream &w);
 
 /**
  * The "main" function of the program.
