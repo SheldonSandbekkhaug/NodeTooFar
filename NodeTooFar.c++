@@ -10,21 +10,23 @@ using namespace std;
 
 int caseNum = 1;
 
-map<int, Node> parse_case(istream& r, int num_connections)
+void parse_case(istream& r, int num_connections,
+	map<int, Node>& network, vector<pair<int, int>>& queries)
 {
-  string s;
-  map<int, Node> network;
-  for(int i=0; i < num_connections;)
+  pair<int, int> this_pair(-1, -1); // Default
+  int i = 0;
+  while(this_pair.first != 0 || this_pair.second != 0)
   {
-    getline(r, s);
-    istringstream line(s);
+    int j;
+    r >> j;
+    int k;
+    r >> k;
 
-    // j, k is a connection between nodes
-    int j = 0;
-    while (line >> j)
+//    cout << j << ", " << k << endl; // tODO remove
+
+    if (i < num_connections)
     {
-      int k;
-      line >> k;
+      // Make pairs for connections
 
       updateNetwork(network, j);
       network[j].store(k);
@@ -34,11 +36,16 @@ map<int, Node> parse_case(istream& r, int num_connections)
 
       ++i;
     }
+    else
+    {
+      // Make pairs for queries
+      this_pair = make_pair(j, k);
+
+      if (j != 0 || k != 0)
+        queries.push_back(this_pair);
+    }
   }
-
-  return network;
 }
-
 
 void updateNetwork(map<int, Node>& network, int id)
 {
@@ -131,31 +138,6 @@ void print_results(int num_nodes, int start, int ttl, ostream &w)
   ++caseNum;
 }
 
-vector<pair<int, int>> get_queries(istream& r)
-{
-  vector<pair<int, int>> queries;
-
-  string s;
-  getline(r, s);
-  istringstream line(s);
-
-  int startNode = 0;
-  while (line >> startNode)
-  {
-    int ttl;
-    line >> ttl;
-
-    // Break condition
-    if (startNode == 0 && ttl == 0)
-      break;
-
-    // Make a pair and add it to the vector
-    queries.push_back(make_pair(startNode, ttl));
-  }
-
-  return queries;
-}
-
 
 void node_too_far_solve(istream& r, ostream& w)
 {
@@ -178,10 +160,10 @@ void node_too_far_solve(istream& r, ostream& w)
     // Get the number of connections in the next case
     num_connections = next_int(s);
 
-    map<int, Node> network = parse_case(r, num_connections);
-
-    // Pairs of node, TTL
-    vector<pair<int, int>> queries = get_queries(r);
+    map<int, Node> network;
+    vector<pair<int, int>> queries;
+    
+    parse_case(r, num_connections, network, queries);
 
     if (iterations > 0)
       w << endl;

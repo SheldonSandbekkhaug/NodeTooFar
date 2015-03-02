@@ -23,7 +23,8 @@ class Node
 /**
  * Read in a single test case. Construct a map of <int, Node>
  */
-map<int, Node> parse_case(istream& r, int num_connections);
+void parse_case(istream& r, int num_connections,
+        map<int, Node>& network, vector<pair<int, int>>& queries);
 
 /**
  *  Check if a node with id exists.
@@ -35,11 +36,6 @@ void updateNetwork(map<int, Node>& network, int id);
  * Solve one test case.
  */
 void solve_case(map<int, Node>, vector<pair<int, int>> queries, ostream& w);
-
-/**
- * Gets all queries for this case
- */
-vector<pair<int, int>> get_queries(istream &r);
 
 /**
  * Solve one query
