@@ -1,4 +1,3 @@
-#include <cassert>  // assert
 #include <iostream> // endl, istream, ostream
 #include <sstream>  // istringstream
 #include <string>   // getline, string
